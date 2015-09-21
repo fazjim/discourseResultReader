@@ -1,6 +1,8 @@
 package edu.pitt.cs.model;
 
 public class PipeAttribute {
+	public static int NUM_ATTRs = 48;
+	
 	public static int RELATION_TYPE = 0; //Col 0: Relation type (Explicit/Implicit/AltLex/EntRel/NoRel)
 	public static int SECTION_NUMBER = 1; //Col 1: Section number (0-24)
 	public static int FILE_NUMBER = 2; // Col 2: File number (0-99)

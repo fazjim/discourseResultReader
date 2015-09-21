@@ -1,7 +1,27 @@
 package edu.pitt.cs.model;
 
+import java.util.StringTokenizer;
+
 public class PipeUnit {
-	private String 
+	private String[] attrs = new String[PipeAttribute.NUM_ATTRs]; 
+	
+	public PipeUnit(String line) {
+		StringTokenizer stk = new StringTokenizer(line, "|");
+		int index = 0;
+		while(stk.hasMoreTokens()&&index<PipeAttribute.NUM_ATTRs) {
+			attrs[index] = stk.nextToken();
+			index++;
+		}
+	}
+	
+	/**
+	 * get attribute
+	 * @param attr  The index of the attribute PipeAttribute.PROPNAME 
+	 * @return
+	 */
+	public String getAttr(int attr) {
+		return attrs[attr];
+	}
 	
 	/*
 	private String RelationType;// (Explicit/Implicit/AltLex/EntRel/NoRel)
