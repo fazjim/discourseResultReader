@@ -5,6 +5,7 @@ import java.util.StringTokenizer;
 public class PipeUnit {
 	private String[] attrs = new String[PipeAttribute.NUM_ATTRs]; 
 	
+	
 	public PipeUnit(String line) {
 		StringTokenizer stk = new StringTokenizer(line, "|");
 		int index = 0;
