@@ -1,5 +1,10 @@
 package edu.pitt.cs.model;
 
+/**
+ * PipeAttribute index
+ * @author zhangfan
+ *
+ */
 public class PipeAttribute {
 	public static int NUM_ATTRs = 48;
 	

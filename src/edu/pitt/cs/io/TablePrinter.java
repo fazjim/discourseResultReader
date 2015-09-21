@@ -17,12 +17,28 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import edu.pitt.cs.model.Table;
 
+/**
+ * Printing the table to screen, txt file or excel files
+ * @author zhangfan
+ *
+ */
 public class TablePrinter {
+	/**
+	 * Print to screen
+	 * @param table
+	 * @throws IOException
+	 */
 	public static void printScreen(Table table) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
 		print(writer,table);
 	}
 
+	/**
+	 * Print to txt files
+	 * @param table
+	 * @param fileName
+	 * @throws IOException
+	 */
 	public static void printFile(Table table, String fileName) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 		print(writer,table);
@@ -47,6 +63,12 @@ public class TablePrinter {
 		writer.close();
 	}
 
+	/**
+	 * Print to excel files
+	 * @param table
+	 * @param excelFile
+	 * @throws IOException
+	 */
 	public static void printExcel(Table table, String excelFile) throws IOException {
 		FileOutputStream fileOut = new FileOutputStream(excelFile);
 		XSSFWorkbook xwb = new XSSFWorkbook();

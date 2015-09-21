@@ -6,6 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data structure of a file containing the pipes
+ * 
+ * @author zhangfan
+ *
+ */
 public class ParseResultFile {
 	private String fileName;
 	private List<PipeUnit> pipes;
@@ -15,17 +21,18 @@ public class ParseResultFile {
 	public void choosePDTB1() {
 		isPDTB1 = true;
 	}
+
 	public void choosePDTB2() {
 		isPDTB1 = false;
 	}
-	
+
 	public boolean isPDTB1() {
 		return isPDTB1;
 	}
 
 	public ParseResultFile(String fileName) throws IOException {
 		this.fileName = fileName;
-		if(fileName.contains("pdtb_1")) {
+		if (fileName.contains("pdtb_1")) {
 			choosePDTB1();
 		} else {
 			choosePDTB2();

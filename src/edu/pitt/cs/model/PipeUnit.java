@@ -2,10 +2,18 @@ package edu.pitt.cs.model;
 
 import java.util.StringTokenizer;
 
+/**
+ * Basic data structure of each line of results
+ * @author zhangfan
+ *
+ */
 public class PipeUnit {
 	private String[] attrs = new String[PipeAttribute.NUM_ATTRs]; 
 	
-	
+	/**
+	 * Constructor, pass in the line to construct all the attributes
+	 * @param line
+	 */
 	public PipeUnit(String line) {
 		StringTokenizer stk = new StringTokenizer(line, "|");
 		int index = 0;
