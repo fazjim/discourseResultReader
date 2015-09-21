@@ -1,5 +1,8 @@
 package edu.pitt.cs.model;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +12,9 @@ import edu.stanford.nlp.util.StringUtils;
 public class parseTree {
 	
 	public static LinkedList<String> revertToTokens(String parse) {
+		/*
+		 * Convert a parse tree to original list of tokens
+		 */
 		Tree T = Tree.valueOf(parse);		
 		List<Tree> Leaves = T.getLeaves();
 		
@@ -20,13 +26,49 @@ public class parseTree {
 	}
 	
 	public static String revertToString(String parse) {
+		/*
+		 * Convert a parse tree to original text
+		 */
 		LinkedList<String> Tokens = revertToTokens(parse);
 		return StringUtils.join(Tokens, " ");
 	}
+	
+	public static LinkedList<String> revertParseFile(String infile) throws IOException {
+		/*
+		 * Read a parse file, sentences a delimited by blank line
+		 * For each parse tree, extract the original sentence
+		 * Return a list of sentences
+		 */
+		System.out.println("[INFO] readParseFile " + infile);
 
-	public static void main(String[] args) {
+		BufferedReader bf = new BufferedReader(new FileReader(infile));
+		LinkedList<String> sentences = new LinkedList<>();
+		String aline = "";
+		String parse = "";		
+		
+		while ((aline = bf.readLine()) != null) {
+			if (aline.trim().isEmpty()) {
+				if (!parse.isEmpty()) {
+					sentences.add(revertToString(parse));
+					parse = "";
+				}
+			}
+			else {
+				parse += aline + " ";
+			}
+		}
+		bf.close();
+		if (!parse.isEmpty()) {
+			sentences.add(revertToString(parse));
+			parse = "";
+		}
+		System.out.println("[--->] Done. " + sentences.size());
+		return sentences;
+	}
+
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		String parse = "(ROOT   (S     (PP (IN In)       (NP (NNP Hell)))     (NP (PRP I))     (VP (MD would)       (VP (VB have)         (NP           (NP (DT the) (NN uncommitted))           (CC or)           (NP (DT the) (NNS people)))         (PP (IN with)           (NP             (NP (DT no) (NN purpose))             (PP (IN in)               (NP                 (NP (NN life))                 (PP (IN in)                   (NP (DT the) (NN vestibule)))))))))     (. .)))";
-		System.out.print(revertToString(parse));
+		String infile = "d:/Downloads/parser.out/90s_kidd.txt.ptree";
+		revertParseFile(infile);
 	}
 }
