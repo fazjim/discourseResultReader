@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -54,5 +55,37 @@ public class ParseResultFile {
 
 	public List<PipeUnit> getPipes() {
 		return this.pipes;
+	}
+	
+	/**
+	 * Get the count of value of a specific category type(column)
+	 * @param categoryType, the column index
+	 * @param categoryValue
+	 * @return
+	 */
+	public int getCount(int categoryType, String categoryValue) {
+		int cnt = 0;
+		for(PipeUnit pipe: pipes) {
+			String value = pipe.getAttr(categoryType).trim();
+			if(value.equals(categoryValue)) cnt++;
+		}
+		return cnt;
+	}
+	
+	/**
+	 * Get the counts of all the occurrences of a specific type(column)
+	 * @param categoryType, the column index
+	 * @return
+	 */
+	public Hashtable<String, Integer> getCount(int categoryType) {
+		Hashtable<String, Integer> counts = new Hashtable<String, Integer>();
+		for(PipeUnit pipe: pipes) {
+			String value = pipe.getAttr(categoryType).trim();
+			int cnt = 0;
+			if(counts.containsKey(value)) cnt = counts.get(value);
+			cnt++;
+			counts.put(value, cnt);
+		}
+		return counts;
 	}
 }
