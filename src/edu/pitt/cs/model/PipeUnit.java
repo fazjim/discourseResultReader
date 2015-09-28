@@ -15,10 +15,17 @@ public class PipeUnit {
 	 * @param line
 	 */
 	public PipeUnit(String line) {
-		StringTokenizer stk = new StringTokenizer(line, "|");
+		/*StringTokenizer stk = new StringTokenizer(line, "|");
 		int index = 0;
 		while(stk.hasMoreTokens()&&index<PipeAttribute.NUM_ATTRs) {
 			attrs[index] = stk.nextToken();
+			index++;
+		}*/
+		line = line.replaceAll("\\|", " \\|");
+		StringTokenizer stk = new StringTokenizer(line, "|");
+		int index = 0;
+		while(stk.hasMoreTokens()&&index<PipeAttribute.NUM_ATTRs) {
+			attrs[index] = stk.nextToken().trim();
 			index++;
 		}
 	}

@@ -31,6 +31,8 @@ public class TablePrinter {
 	public static void printScreen(Table table) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
 		print(writer,table);
+		writer.flush();
+		writer.close();
 	}
 
 	/**
@@ -42,6 +44,7 @@ public class TablePrinter {
 	public static void printFile(Table table, String fileName) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 		print(writer,table);
+		writer.close();
 	}
 	
 	public static void print(BufferedWriter writer, Table table) throws IOException {
@@ -60,7 +63,6 @@ public class TablePrinter {
 			}
 			writer.write("\n");
 		}
-		writer.close();
 	}
 
 	/**
