@@ -3,6 +3,7 @@ package edu.pitt.cs.main;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 import edu.pitt.cs.analysis.GeneralAnalysis;
@@ -32,7 +33,7 @@ public class CommandMain {
 		String tableOption = "-t";
 		String pdtbOption = "-p";
 		String output = "-o";
-
+		
 		String inputPath = parameters.get(input);
 		if (inputPath == null) {
 			System.out.println("Input not specified");
@@ -49,39 +50,39 @@ public class CommandMain {
 				return;
 			}
 			Table table = null;
-			if (tableOption.equals("1") || tableOption.equals("2")
-					|| tableOption.equals("3")) {
+			if (tableOpValue.equals("1") || tableOpValue.equals("2")
+					|| tableOpValue.equals("3")) {
 				if (pdtbOpValue.equals("1")) {
-					if (tableOption.equals("1")) {
+					if (tableOpValue.equals("1")) {
 						table = GeneralAnalysis.analyzeTable1(results);
-					} else if (tableOption.equals("2")) {
+					} else if (tableOpValue.equals("2")) {
 						table = GeneralAnalysis.analyzeTable2(results);
-					} else if (tableOption.equals("3")) {
+					} else if (tableOpValue.equals("3")) {
 						table = GeneralAnalysis.analyzeTable3PDTB1(results);
 					} else {
 						System.out.println("Specify the right table index");
 						return;
 					}
 				} else if (pdtbOpValue.equals("2")) {
-					if (tableOption.equals("1")) {
+					if (tableOpValue.equals("1")) {
 						System.out
 								.println("PDTB2 has to be merged to generate Table 1, use '-p m' instead");
 						return;
-					} else if (tableOption.equals("2")) {
+					} else if (tableOpValue.equals("2")) {
 						table = GeneralAnalysis.analyzeTable2PDTB2(results);
-					} else if (tableOption.equals("3")) {
+					} else if (tableOpValue.equals("3")) {
 						table = GeneralAnalysis.analyzeTable3(results);
 					} else {
 						System.out.println("Specify the right table index");
 						return;
 					}
 				} else if (pdtbOpValue.equals("M") || pdtbOpValue.equals("m")) {
-					if (tableOption.equals("1")) {
+					if (tableOpValue.equals("1")) {
 						table = GeneralAnalysis.analyzeTable1PDTB2(results);
-					} else if (tableOption.equals("2")) {
+					} else if (tableOpValue.equals("2")) {
 						table = GeneralAnalysis
 								.analyzeTable2PDTB2Merge(results);
-					} else if (tableOption.equals("3")) {
+					} else if (tableOpValue.equals("3")) {
 						table = GeneralAnalysis.analyzeTable3Merge(results);
 					} else {
 						System.out.println("Specify the right table index");
@@ -97,13 +98,13 @@ public class CommandMain {
 			if(parameters.containsKey(output)) {
 				String outputPath = parameters.get(output);
 				File f = new File(outputPath);
-				if(!f.getParentFile().exists()) {
-					f.getParentFile().mkdirs();
+				if(!f.exists()) {
+					f.getAbsoluteFile().getParentFile().mkdirs();
 				} 
 				if(f.getName().endsWith(".xlsx")) {
-					TablePrinter.printExcel(table, outputPath);
+					TablePrinter.printExcel(table, f.getAbsolutePath());
 				} else {
-					TablePrinter.printFile(table, outputPath);
+					TablePrinter.printFile(table, f.getAbsolutePath());
 				}
 			} else {
 				TablePrinter.printScreen(table);
