@@ -56,33 +56,92 @@ public class ParseResultFile {
 	public List<PipeUnit> getPipes() {
 		return this.pipes;
 	}
-	
+
+	public int getCount(List<Integer> categoryTypes, List<String> categoryValues) {
+		int cnt = 0;
+		for (PipeUnit pipe : pipes) {
+			boolean exists = true;
+			for (int i = 0; i < categoryTypes.size(); i++) {
+				int categoryType = categoryTypes.get(i);
+				String categoryValue = categoryValues.get(i);
+				String value = pipe.getAttr(categoryType).trim();
+				if (!value.equals(categoryValue)) {
+					exists = false;
+					break;
+				}
+			}
+			if (exists)
+				cnt++;
+		}
+		return cnt;
+	}
+
 	/**
 	 * Get the count of value of a specific category type(column)
-	 * @param categoryType, the column index
+	 * 
+	 * @param categoryType
+	 *            , the column index
 	 * @param categoryValue
 	 * @return
 	 */
 	public int getCount(int categoryType, String categoryValue) {
 		int cnt = 0;
-		for(PipeUnit pipe: pipes) {
+		for (PipeUnit pipe : pipes) {
 			String value = pipe.getAttr(categoryType).trim();
-			if(value.equals(categoryValue)) cnt++;
+			if (value.equals(categoryValue))
+				cnt++;
 		}
 		return cnt;
 	}
-	
+
+	public int getCountMerge(List<Integer> categoryTypes,
+			List<String> categoryValues) {
+		int cnt = 0;
+		for (PipeUnit pipe : pipes) {
+			boolean exists = true;
+			for (int i = 0; i < categoryTypes.size(); i++) {
+				int categoryType = categoryTypes.get(i);
+				String categoryValue = categoryValues.get(i);
+				String value = pipe.getAttr(categoryType).trim();
+				if (value.contains("."))
+					value = value.substring(0, value.indexOf("."));
+				if (!value.equals(categoryValue)) {
+					exists = false;
+					break;
+				}
+			}
+			if (exists)
+				cnt++;
+		}
+		return cnt;
+	}
+
+	public int getCountMerge(Integer categoryType, String categoryValue) {
+		int cnt = 0;
+		for (PipeUnit pipe : pipes) {
+			String value = pipe.getAttr(categoryType).trim();
+			if (value.contains("."))
+				value = value.substring(0, value.indexOf("."));
+			if (value.equals(categoryValue))
+				cnt++;
+		}
+		return cnt;
+	}
+
 	/**
 	 * Get the counts of all the occurrences of a specific type(column)
-	 * @param categoryType, the column index
+	 * 
+	 * @param categoryType
+	 *            , the column index
 	 * @return
 	 */
 	public Hashtable<String, Integer> getCount(int categoryType) {
 		Hashtable<String, Integer> counts = new Hashtable<String, Integer>();
-		for(PipeUnit pipe: pipes) {
+		for (PipeUnit pipe : pipes) {
 			String value = pipe.getAttr(categoryType).trim();
 			int cnt = 0;
-			if(counts.containsKey(value)) cnt = counts.get(value);
+			if (counts.containsKey(value))
+				cnt = counts.get(value);
 			cnt++;
 			counts.put(value, cnt);
 		}

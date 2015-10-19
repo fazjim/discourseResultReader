@@ -21,6 +21,195 @@ import edu.pitt.cs.model.Table;
  *
  */
 public class GeneralAnalysis {
+	public static void enterTable(ParseResultFile file, Table table) {
+		List<String> attrs = new ArrayList<String>();
+		List<String> columns = table.getColumns();
+		for (int i = 0; i < columns.size(); i++) {
+			String columnName = columns.get(i);
+			if (columnName.equals("FileName")) {
+				attrs.add(file.getFileName());
+			} else {
+				if (columnName.endsWith("_exp")) {
+					List<Integer> categories = new ArrayList<Integer>();
+					List<String> values = new ArrayList<String>();
+
+					categories.add(PipeAttribute.RELATION_TYPE);
+					categories.add(PipeAttribute.FIRST_SEMCLASS_CONN);
+					values.add("Explicit");
+					values.add(columnName.substring(0, columnName.indexOf("_")));
+
+					attrs.add(Integer.toString(file
+							.getCount(categories, values)));
+				} else if (columnName.endsWith("_imp")) {
+					List<Integer> categories = new ArrayList<Integer>();
+					List<String> values = new ArrayList<String>();
+
+					categories.add(PipeAttribute.RELATION_TYPE);
+					categories.add(PipeAttribute.FIRST_SEMCLASS_CONN);
+					values.add("Implicit");
+					values.add(columnName.substring(0, columnName.indexOf("_")));
+
+					attrs.add(Integer.toString(file
+							.getCount(categories, values)));
+				} else if (columnName.equals("Explicit")
+						|| columnName.equals("Implicit")
+						|| columnName.equals("EntRel")) {
+					int categoryType = PipeAttribute.RELATION_TYPE;
+					attrs.add(Integer.toString(file.getCount(categoryType,
+							columnName)));
+				} else {
+					int categoryType = PipeAttribute.FIRST_SEMCLASS_CONN;
+					attrs.add(Integer.toString(file.getCount(categoryType,
+							columnName)));
+				}
+			}
+		}
+
+		table.addRow(attrs);
+	}
+
+	public static void enterTable1Merge(ParseResultFile file, Table table) {
+		List<String> attrs = new ArrayList<String>();
+		List<String> columns = table.getColumns();
+		for (int i = 0; i < columns.size(); i++) {
+			String columnName = columns.get(i);
+			if (columnName.equals("FileName")) {
+				attrs.add(file.getFileName());
+			} else {
+				if (columnName.endsWith("_exp")) {
+					List<Integer> categories = new ArrayList<Integer>();
+					List<String> values = new ArrayList<String>();
+
+					categories.add(PipeAttribute.RELATION_TYPE);
+					categories.add(PipeAttribute.FIRST_SEMCLASS_CONN);
+					values.add("Explicit");
+					values.add(columnName.substring(0, columnName.indexOf("_")));
+
+					attrs.add(Integer.toString(file.getCountMerge(categories,
+							values)));
+				} else if (columnName.endsWith("_imp")) {
+					List<Integer> categories = new ArrayList<Integer>();
+					List<String> values = new ArrayList<String>();
+
+					categories.add(PipeAttribute.RELATION_TYPE);
+					categories.add(PipeAttribute.FIRST_SEMCLASS_CONN);
+					values.add("Implicit");
+					values.add(columnName.substring(0, columnName.indexOf("_")));
+
+					attrs.add(Integer.toString(file.getCountMerge(categories,
+							values)));
+				} else if (columnName.equals("Explicit")
+						|| columnName.equals("Implicit")
+						|| columnName.equals("EntRel")) {
+					int categoryType = PipeAttribute.RELATION_TYPE;
+					attrs.add(Integer.toString(file.getCount(categoryType,
+							columnName)));
+				} else {
+					int categoryType = PipeAttribute.FIRST_SEMCLASS_CONN;
+					attrs.add(Integer.toString(file.getCountMerge(categoryType,
+							columnName)));
+				}
+			}
+		}
+
+		table.addRow(attrs);
+	}
+
+	public static Table statTable1(List<ParseResultFile> files) {
+		Table table = new Table("PDTB 1");
+		// Relation Types: Explicit/Implicit/AltLex/EntRel/NoRel
+		// pdtb senses: Comparison/Contingency/Temporal/Expansion
+		table.addColumn("FileName");
+		table.addColumn("Explicit");
+		table.addColumn("Implicit");
+		table.addColumn("EntRel");
+
+		table.addColumn("Comparison");
+		table.addColumn("Comparison_exp");
+		table.addColumn("Comparison_imp");
+		table.addColumn("Contingency");
+		table.addColumn("Contingency_exp");
+		table.addColumn("Contingency_imp");
+		table.addColumn("Temporal");
+		table.addColumn("Temporal_exp");
+		table.addColumn("Temporal_imp");
+		table.addColumn("Expansion");
+		table.addColumn("Expansion_exp");
+		table.addColumn("Expansion_imp");
+
+		for (ParseResultFile file : files) {
+			if (file.isPDTB1()) {
+				enterTable(file, table);
+			}
+		}
+		return table;
+	}
+
+	public static Table statTable1Merge(List<ParseResultFile> files) {
+		Table table = new Table("PDTB 1 Merge");
+		// Relation Types: Explicit/Implicit/AltLex/EntRel/NoRel
+		// pdtb senses: Comparison/Contingency/Temporal/Expansion
+		table.addColumn("FileName");
+		table.addColumn("Explicit");
+		table.addColumn("Implicit");
+		table.addColumn("EntRel");
+
+		table.addColumn("Comparison");
+		table.addColumn("Comparison_exp");
+		table.addColumn("Comparison_imp");
+		table.addColumn("Contingency");
+		table.addColumn("Contingency_exp");
+		table.addColumn("Contingency_imp");
+		table.addColumn("Temporal");
+		table.addColumn("Temporal_exp");
+		table.addColumn("Temporal_imp");
+		table.addColumn("Expansion");
+		table.addColumn("Expansion_exp");
+		table.addColumn("Expansion_imp");
+
+		for (ParseResultFile file : files) {
+			if (!file.isPDTB1()) {
+				enterTable1Merge(file, table);
+			}
+		}
+		return table;
+	}
+
+	public static void addAttrColumn(Table table, String colName) {
+		table.addColumn(colName);
+		table.addColumn(colName + "_exp");
+		table.addColumn(colName + "_imp");
+	}
+
+	public static Table statTable2(List<ParseResultFile> files) {
+		Table table = new Table("PDTB 2");
+		// Relation Types: Explicit/Implicit/AltLex/EntRel/NoRel
+		// pdtb senses: Comparison/Contingency/Temporal/Expansion
+		table.addColumn("FileName");
+		table.addColumn("Explicit");
+		table.addColumn("Implicit");
+		table.addColumn("EntRel");
+
+		addAttrColumn(table, "Comparison.Contrast");
+		addAttrColumn(table, "Comparison.Concession");
+		addAttrColumn(table, "Contingency.Cause");
+		addAttrColumn(table, "Contingency.Condition");
+		addAttrColumn(table, "Temporal.Asynchronous");
+		addAttrColumn(table, "Temporal.Synchronous");
+		addAttrColumn(table, "Expansion.Conjunction");
+		addAttrColumn(table, "Expansion.Instantiation");
+		addAttrColumn(table, "Expansion.Restatement");
+		addAttrColumn(table, "Expansion.Alternative");
+		addAttrColumn(table, "Expansion.Exception");
+		addAttrColumn(table, "Expansion.List");
+
+		for (ParseResultFile file : files) {
+			if (!file.isPDTB1()) {
+				enterTable(file, table);
+			}
+		}
+		return table;
+	}
 
 	/**
 	 * Analyze Table 1
@@ -298,8 +487,9 @@ public class GeneralAnalysis {
 							.trim();
 					String pdtbsense = pipe
 							.getAttr(PipeAttribute.FIRST_SEMCLASS_CONN);
-					if(pdtbsense.contains("."))
-					pdtbsense = pdtbsense.substring(0, pdtbsense.indexOf("."));
+					if (pdtbsense.contains("."))
+						pdtbsense = pdtbsense.substring(0,
+								pdtbsense.indexOf("."));
 					if (pdtbsense != null) {
 						senses.add(pdtbsense);
 						if (relation.equals("Explicit")) {
@@ -483,9 +673,9 @@ public class GeneralAnalysis {
 								.getAttr(PipeAttribute.CONN_HEAD);
 						String pdtbsense = pipe
 								.getAttr(PipeAttribute.FIRST_SEMCLASS_CONN);
-						if(pdtbsense.contains("."))
-						pdtbsense = pdtbsense.substring(0,
-								pdtbsense.indexOf("."));
+						if (pdtbsense.contains("."))
+							pdtbsense = pdtbsense.substring(0,
+									pdtbsense.indexOf("."));
 						if (connective != null) {
 							connective = connective.trim();
 							Hashtable<String, Integer> tempCounts;
