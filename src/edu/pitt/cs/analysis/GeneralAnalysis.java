@@ -1,5 +1,6 @@
 package edu.pitt.cs.analysis;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +28,7 @@ public class GeneralAnalysis {
 		for (int i = 0; i < columns.size(); i++) {
 			String columnName = columns.get(i);
 			if (columnName.equals("FileName")) {
-				attrs.add(file.getFileName());
+				attrs.add(new File(file.getFileName()).getName());
 			} else {
 				if (columnName.endsWith("_exp")) {
 					List<Integer> categories = new ArrayList<Integer>();
@@ -74,7 +75,7 @@ public class GeneralAnalysis {
 		for (int i = 0; i < columns.size(); i++) {
 			String columnName = columns.get(i);
 			if (columnName.equals("FileName")) {
-				attrs.add(file.getFileName());
+				attrs.add(new File(file.getFileName()).getName());
 			} else {
 				if (columnName.endsWith("_exp")) {
 					List<Integer> categories = new ArrayList<Integer>();
