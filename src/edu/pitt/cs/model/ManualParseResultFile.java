@@ -13,10 +13,14 @@ import java.util.List;
  * @author zhangfan
  *
  */
-public class ParseResultFile {
+public class ManualParseResultFile {
 	private String fileName;
 	private List<PipeUnit> pipes;
 
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
 	private boolean isPDTB1 = false;
 
 	public void choosePDTB1() {
@@ -31,17 +35,22 @@ public class ParseResultFile {
 		return isPDTB1;
 	}
 
-	public ParseResultFile() {
+	public ManualParseResultFile() {
 		pipes = new ArrayList<PipeUnit>();
 	}
 	
-	public ParseResultFile(String fileName) throws IOException {
+	public void addUnit(PipeUnit unit) {
+		this.pipes.add(unit);
+	}
+	
+	public ManualParseResultFile(String fileName) throws IOException {
 		this.fileName = fileName;
-		if (fileName.contains("pdtb_1")) {
+		/*if (fileName.contains("pdtb_1")) {
 			choosePDTB1();
 		} else {
 			choosePDTB2();
-		}
+		}*/
+		choosePDTB1();
 		pipes = new ArrayList<PipeUnit>();
 		BufferedReader reader = new BufferedReader(new FileReader(fileName));
 		String line = reader.readLine();
