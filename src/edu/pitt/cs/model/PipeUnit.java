@@ -70,6 +70,10 @@ public class PipeUnit {
 	public String getRelationType() {
 		return getAttr(PipeAttribute.FIRST_SEMCLASS_CONN);
 	}
+	
+	public String getManualRelationType() {
+		return getAttr(8);
+	}
 
 	private String range1Txt = "";
 	private String range2Txt = "";

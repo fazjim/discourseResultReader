@@ -1,11 +1,14 @@
 package edu.pitt.cs.io;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -13,6 +16,7 @@ import java.util.List;
 
 import edu.pitt.cs.model.ManualParseResultFile;
 import edu.pitt.cs.model.PipeUnit;
+import edu.stanford.nlp.international.Languages.Language;
 
 public class ModificationRemover {
 	static String path = "C:\\Not Backed Up\\discourse_parse_results\\litman_corpus\\Braverman\\Braverman_raw_txt";
@@ -58,20 +62,29 @@ public class ModificationRemover {
 				String logFile = d1File.getFileName() + "_LOG_UNCHANGED";
 				BufferedWriter writer = new BufferedWriter(new FileWriter(
 						logFile));
-				System.out.println("Write file:"+logFile);
+				System.out.println("Write file:" + logFile);
 				for (PipeUnit pipe : pipes) {
 					for (PipeUnit pipe2 : pipes2) {
-						if (pipe.getRange1Txt().contains(pipe2.getRange1Txt())
-								|| pipe2.getRange1Txt().contains(
-										pipe.getRange1Txt())) {
-							writer.write("Draft 1" + pipe.getRelationType()
-									+ "|" + pipe.getElementType() + "|"
-									+ pipe.getRange1Txt() + "|"
-									+ pipe.getRange2Txt() + "\n");
-							writer.write("Draft 2" + pipe2.getRelationType()
-									+ "|" + pipe2.getElementType() + "|"
-									+ pipe2.getRange1Txt() + "|"
-									+ pipe2.getRange2Txt() + "\n");
+						if (pipe.getRange1Txt().trim()
+								.equals(pipe2.getRange1Txt().trim())
+								&& pipe.getRange2Txt().trim()
+										.equals(pipe2.getRange2Txt().trim())) {
+							if (!pipe.getManualRelationType().equals(
+									pipe2.getManualRelationType())
+									|| !pipe.getElementType().equals(
+											pipe2.getElementType())) {
+								writer.write("Draft 1|"
+										+ pipe.getManualRelationType() + "|"
+										+ pipe.getElementType() + "|"
+										+ pipe.getRange1Txt() + "|"
+										+ pipe.getRange2Txt() + "\n");
+								writer.write("Draft 2|"
+										+ pipe2.getManualRelationType() + "|"
+										+ pipe2.getElementType() + "|"
+										+ pipe2.getRange1Txt() + "|"
+										+ pipe2.getRange2Txt() + "\n");
+								writer.write("\n");
+							}
 						}
 					}
 					// if (pipeTable.containsKey(pipe.getRange1Txt())) {
@@ -149,7 +162,7 @@ public class ModificationRemover {
 
 			ManualParseResultFile newFile = new ManualParseResultFile();
 			newFile.setFileName(name);
-			if (name.contains("draft 1")) {
+			if (name.contains("draft1")) {
 				// retrieve txt in draft 1 and go to find draft 2
 				List<PipeUnit> units = file.getPipes();
 				for (PipeUnit unit : units) {
@@ -239,7 +252,9 @@ public class ModificationRemover {
 
 	public static String readTxt(File f) throws IOException {
 		String txt = "";
-		BufferedReader reader = new BufferedReader(new FileReader(f));
+		// BufferedReader reader = new BufferedReader(new FileReader(f));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new BufferedInputStream(new FileInputStream(f)), "utf-8"));
 		String line = reader.readLine();
 		while (line != null) {
 			txt += line + "\n";
