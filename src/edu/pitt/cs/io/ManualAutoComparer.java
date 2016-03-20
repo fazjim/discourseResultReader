@@ -74,8 +74,8 @@ public class ManualAutoComparer {
 				System.out.println(fileName);
 			else {
 				String compareStr = compare(mFile, aFile);
-				String outputPath = outputFolderPath + "/" + postFix + "/" +fileName
-						+ ".log";
+				String outputPath = outputFolderPath + "/" + postFix + "/"
+						+ fileName + ".log";
 				BufferedWriter writer = new BufferedWriter(new FileWriter(
 						outputPath));
 				writer.write(compareStr);
@@ -109,6 +109,8 @@ public class ManualAutoComparer {
 		int agreedExpansion = 0;
 		int agreedTemporal = 0;
 
+		List<String> agreedDetails = new ArrayList<String>();
+		List<String> typeAgreedDetails = new ArrayList<String>();
 		List<String> disagreedDetails = new ArrayList<String>();
 		List<String> typeDisagreedDetails = new ArrayList<String>();
 
@@ -123,17 +125,19 @@ public class ManualAutoComparer {
 				String range1TxtAuto = autoUnit.getRange1TxtAuto();
 				String range2TxtAuto = autoUnit.getRange2TxtAuto();
 
-				/*range1TxtManual = range1TxtManual.replaceAll(" ", "");
-				range2TxtManual = range2TxtManual.replaceAll(" ", "");
-				range1TxtManual = range1TxtManual.replaceAll("“", "\"");
-				range2TxtManual = range2TxtManual.replaceAll("”", "\"");
-				range1TxtAuto = range1TxtAuto.replaceAll(" ", "");
-				range2TxtAuto = range2TxtAuto.replaceAll(" ", "");*/
-				range1TxtManual = range1TxtManual.replaceAll("[^a-zA-Z]","");
-				range2TxtManual = range2TxtManual.replaceAll("[^a-zA-Z]","");
-				range1TxtAuto = range1TxtAuto.replaceAll("[^a-zA-Z]","");
-				range2TxtAuto = range2TxtAuto.replaceAll("[^a-zA-Z]","");
-				
+				/*
+				 * range1TxtManual = range1TxtManual.replaceAll(" ", "");
+				 * range2TxtManual = range2TxtManual.replaceAll(" ", "");
+				 * range1TxtManual = range1TxtManual.replaceAll("“", "\"");
+				 * range2TxtManual = range2TxtManual.replaceAll("”", "\"");
+				 * range1TxtAuto = range1TxtAuto.replaceAll(" ", "");
+				 * range2TxtAuto = range2TxtAuto.replaceAll(" ", "");
+				 */
+				range1TxtManual = range1TxtManual.replaceAll("[^a-zA-Z]", "");
+				range2TxtManual = range2TxtManual.replaceAll("[^a-zA-Z]", "");
+				range1TxtAuto = range1TxtAuto.replaceAll("[^a-zA-Z]", "");
+				range2TxtAuto = range2TxtAuto.replaceAll("[^a-zA-Z]", "");
+
 				if (range1TxtManual.trim().length() == 0
 						&& range1TxtAuto.trim().length() == 0) {
 					isRange1Match = true;
@@ -165,61 +169,53 @@ public class ManualAutoComparer {
 					String aType = autoUnit.getElementType();
 					String mSenseType = manualUnit.getManualRelationType();
 					String aSenseType = autoUnit.getRelationType();
+
+					String str = "PARSER|" + aType + "|" + aSenseType + "|"
+							+ autoUnit.getRange1TxtAuto() + "|"
+							+ autoUnit.getRange2TxtAuto();
+					str += "\n";
+					str += "KFR|" + mType + "|" + mSenseType + "|"
+							+ manualUnit.getRange1Txt() + "|"
+							+ manualUnit.getRange2Txt();
+					str += "\n";
+
 					if (mType.equals(aType)) {
 						if (mType.equals("Explicit")) {
 							agreedExplicit++;
-							
-							if (mSenseType.equals(aSenseType)) {
-								if (mSenseType.equals("Comparison")) {
-									agreedComparison++;
-								} else if (mSenseType.equals("Contingency")) {
-									agreedContingency++;
-								} else if (mSenseType.equals("Expansion")) {
-									agreedExpansion++;
-								} else if (mSenseType.equals("Temporal")) {
-									agreedTemporal++;
-								}
-								agreedTypeCount++;
-							} else {
-								String str = "Auto: " + aSenseType + ", Kate: "
-										+ mSenseType + ", Explicit"+ "|"+manualUnit.getRange1Txt()+"|"+manualUnit.getRange2Txt();
-								typeDisagreedDetails.add(str);
-							}
 						} else if (mType.equals("Implicit")) {
 							agreedImplicit++;
-							
-							if (mSenseType.equals(aSenseType)) {
-								if (mSenseType.equals("Comparison")) {
-									agreedComparison++;
-								} else if (mSenseType.equals("Contingency")) {
-									agreedContingency++;
-								} else if (mSenseType.equals("Expansion")) {
-									agreedExpansion++;
-								} else if (mSenseType.equals("Temporal")) {
-									agreedTemporal++;
-								}
-								agreedTypeCount++;
-							} else {
-								String str = "Auto: " + aSenseType + ", Kate: "
-										+ mSenseType + ", Implicit" + "|"+manualUnit.getRange1Txt()+"|"+manualUnit.getRange2Txt();
-								typeDisagreedDetails.add(str);
-							}
 						} else if (mType.equals("EntRel")) {
 							agreedEnt++;
 						} else {
 							agreedNoEnt++;
 						}
+						agreedDetails.add(str);
 					} else {
-						String str = "Auto:" + aType + ", Kate: " + mType;
 						disagreedDetails.add(str);
 					}
 
+					if (mSenseType.equals(aSenseType)) {
+						if (mSenseType.equals("Comparison")) {
+							agreedComparison++;
+						} else if (mSenseType.equals("Contingency")) {
+							agreedContingency++;
+						} else if (mSenseType.equals("Expansion")) {
+							agreedExpansion++;
+						} else if (mSenseType.equals("Temporal")) {
+							agreedTemporal++;
+						}
+						agreedTypeCount++;
+						typeAgreedDetails.add(str);
+					} else {
+						typeDisagreedDetails.add(str);
+					}
 				} else {
 
 				}
 			}
 			if (found == false) {
-				String str = "Kate annotated while auto does not: |"
+				String str = "KFR ONLY|" + manualUnit.getElementType() + "|"
+						+ manualUnit.getManualRelationType() + "|"
 						+ manualUnit.getRange1Txt() + "|"
 						+ manualUnit.getRange2Txt();
 				disagreedDetails.add(str);
@@ -265,44 +261,63 @@ public class ManualAutoComparer {
 					found = true;
 			}
 			if (found == false) {
-				String str = "Auto annotated while Kate does not: |"
-						+ autoUnit.getRange1TxtAuto() + "|"
+				String str = "PARSER ONLY|" + autoUnit.getElementType() + "|"
+						+ autoUnit.getRelationType() + "|" +  autoUnit.getRange1TxtAuto() + "|"
 						+ autoUnit.getRange2TxtAuto();
 				disagreedDetails.add(str);
 			}
 		}
 		int senseCount = agreedExplicit + agreedImplicit;
+		int agreedCorrect = agreedExplicit + agreedImplicit + agreedEnt
+				+ agreedNoEnt;
 
-		String start = "Relation Type: " + agreedCount + " common(agreed)/"
-				+ biggerCount + " total\n";
+		String start = "Relation Type: " + agreedCorrect + " common/"
+				+ agreedCount + " total\n";
 		String kfrCountStr = "KFR: " + manualCount + " annotated revisions\n";
 		String autoCountStr = "PDTB: " + autoCount + " annotated revisions\n";
-		String agreedStr = "Agreed: \n" + agreedExplicit + "Explicit\n"
-				+ agreedImplicit + "Implicit\n" + agreedEnt + "EntRel\n"
-				+ agreedNoEnt + "NoRel\n";
-		String disAgreedStr = "Disagreed: ";
+		String agreedStr = "AGREED: \n" + agreedExplicit + " Explicit\n"
+				+ agreedImplicit + " Implicit\n" + agreedEnt + " EntRel\n"
+				+ agreedNoEnt + " NoRel\n";
+		
+		String agreedElement = "AGREED:\n";
+		for (String str: agreedDetails) {
+			agreedElement += str + "\n";
+		}
+		String agreedType = "AGREED:\n";
+		for (String str: typeAgreedDetails) {
+			agreedType += str + "\n";
+		}
+		
+		String disAgreedStr = "DISAGREED:\n";
 		for (String str : disagreedDetails) {
 			disAgreedStr += str + "\n";
 		}
 
-		String disAgreedTypeStr = "Disagreed: ";
+		String disAgreedTypeStr = "DISAGREED:\n";
 		for (String str : typeDisagreedDetails) {
 			disAgreedTypeStr += str + "\n";
 		}
 		String secondStart = "4 Class Relation Sense: " + agreedTypeCount + "/"
-				+ senseCount + " Agreed\n";
+				+ senseCount + " AGREED\n";
 		secondStart += agreedComparison + " Comparison\n";
 		secondStart += agreedContingency + " Contingency\n";
 		secondStart += agreedExpansion + " Expansion\n";
-		secondStart += agreedTemporal + " Temporal\n";
+		secondStart += agreedTemporal + " Temporal\n\n";
 
 		result += start;
 		result += kfrCountStr;
 		result += autoCountStr;
 		result += agreedStr;
-		result += disAgreedStr;
 		result += "\n";
 		result += secondStart;
+
+		result += "Relation Type\n";
+		result += agreedElement;
+		result += disAgreedStr;
+		
+		result += "\n";
+		result += "Relation sense\n";
+		result += agreedType;
 		result += disAgreedTypeStr;
 		return result;
 	}
