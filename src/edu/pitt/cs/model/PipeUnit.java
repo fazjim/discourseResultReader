@@ -94,6 +94,13 @@ public class PipeUnit {
 		return this.range2Txt;
 	}
 
+	public String getRange1TxtAuto() {
+		return getAttr(PipeAttribute.ARG1_RAWTEXT);
+	}
+	
+	public String getRange2TxtAuto() {
+		return getAttr(PipeAttribute.ARG2_RAWTEXT);
+	}
 	/*
 	 * private String RelationType;// (Explicit/Implicit/AltLex/EntRel/NoRel)
 	 * private int sectionNumber; // (0-24) private int fileNumber; //(0-99)
