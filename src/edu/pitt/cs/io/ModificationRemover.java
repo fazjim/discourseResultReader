@@ -112,6 +112,78 @@ public class ModificationRemover {
 		}
 	}
 
+	public static void feedTxtInfo(ManualParseResultFile file,
+			String referencePath) throws IOException {
+		String name = file.getFileName();
+		File f = new File(name);
+		String fileName = f.getName();
+		if (fileName.contains(" - "))
+			fileName = fileName.substring(0, fileName.indexOf(" - ")).trim();
+		fileName = fileName.replaceAll("\\.txt", "").trim();
+		String d1FolderPath = referencePath + "/draft1";
+		String d2FolderPath = referencePath + "/draft2";
+		File d1Folder = new File(d1FolderPath);
+		File d2Folder = new File(d2FolderPath);
+		File d1File = null;
+		File d2File = null;
+		File[] subsD1 = d1Folder.listFiles();
+		File[] subsD2 = d2Folder.listFiles();
+		for (File d1Temp : subsD1) {
+			if (d1Temp.isFile()) {
+				if (d1Temp.getName().contains(fileName)) {
+					d1File = d1Temp;
+					break;
+				}
+			}
+		}
+		for (File d2Temp : subsD2) {
+			if (d2Temp.isFile()) {
+				if (d2Temp.getName().contains(fileName)) {
+					d2File = d2Temp;
+					break;
+				}
+			}
+		}
+
+		if (d1File == null) {
+			System.out.println("D1 file is null");
+		} else if (d2File == null) {
+			System.out.println("D2 file is null");
+		} else {
+
+			String d1Txt = readTxt(d1File);
+			String d2Txt = readTxt(d2File);
+
+			ManualParseResultFile newFile = new ManualParseResultFile();
+			newFile.setFileName(name);
+
+			List<PipeUnit> units = file.getPipes();
+			for (PipeUnit unit : units) {
+				String range1 = unit.getManualRange1();
+				String range2 = unit.getManualRange2();
+				int[] range1Indices = retrieveRanges(range1);
+				int[] range2Indices = retrieveRanges(range2);
+
+				String range1Txt = "";
+				String range2Txt = "";
+
+				if (name.contains("draft1")) {
+					range1Txt = d1Txt.substring(range1Indices[0],
+							range1Indices[1]);
+					range2Txt = d1Txt.substring(range2Indices[0],
+							range2Indices[1]);
+				} else {
+					range1Txt = d2Txt.substring(range1Indices[0],
+							range1Indices[1]);
+					range2Txt = d2Txt.substring(range2Indices[0],
+							range2Indices[1]);
+				}
+				unit.setRange1Txt(range1Txt);
+				unit.setRange2Txt(range2Txt);
+			}
+		}
+	}
+
 	public static ManualParseResultFile removeModified(
 			ManualParseResultFile file, String referencePath)
 			throws IOException {

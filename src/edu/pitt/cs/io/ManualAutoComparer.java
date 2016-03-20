@@ -1,6 +1,11 @@
 package edu.pitt.cs.io;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import edu.pitt.cs.model.ManualParseResultFile;
@@ -8,6 +13,77 @@ import edu.pitt.cs.model.ParseResultFile;
 import edu.pitt.cs.model.PipeUnit;
 
 public class ManualAutoComparer {
+	public static void main(String[] args) throws IOException {
+		String manualFolderPath = "C:\\Not Backed Up\\discourse_parse_results\\manual2";
+		String autoFolderPath = "C:\\Not Backed Up\\discourse_parse_results\\litman_corpus\\Braverman\\Braverman_raw_txt";
+		String outputFolderPath = "C:\\Not Backed Up\\discourse_parse_results\\compareOutput";
+		compare(manualFolderPath, autoFolderPath, outputFolderPath);
+	}
+
+	public static void compare(String manualFolderPath, String autoFolderPath,
+			String outputFolderPath) throws IOException {
+		List<ManualParseResultFile> manualResults = ManualParseResultReader
+				.readFiles(manualFolderPath);
+		List<ParseResultFile> autoResults = ParseResultReader
+				.readFiles(autoFolderPath);
+		Hashtable<String, ManualParseResultFile> tableD1 = new Hashtable<String, ManualParseResultFile>();
+		Hashtable<String, ManualParseResultFile> tableD2 = new Hashtable<String, ManualParseResultFile>();
+		String path = "C:\\Not Backed Up\\discourse_parse_results\\litman_corpus\\Braverman\\Braverman_raw_txt";
+		for (ManualParseResultFile mFile : manualResults) {
+			ModificationRemover.feedTxtInfo(mFile, path);
+			String fileName = mFile.getFileName();
+			boolean isD1 = false;
+			if (fileName.contains("draft1"))
+				isD1 = true;
+			fileName = (new File(fileName)).getName();
+			if (fileName.contains(" - "))
+				fileName = fileName.substring(0, fileName.indexOf(" - "))
+						.trim();
+			fileName = fileName.replaceAll("\\.txt", "").trim();
+			/*
+			 * fileName = fileName.substring(0, fileName.lastIndexOf(".txt"))
+			 * .trim();
+			 */
+			if (isD1)
+				tableD1.put(fileName, mFile);
+			else
+				tableD2.put(fileName, mFile);
+		}
+		for (ParseResultFile aFile : autoResults) {
+			String fileName = aFile.getFileName();
+			boolean isD1 = false;
+			if (fileName.contains("draft1")) {
+				isD1 = true;
+			}
+			fileName = (new File(fileName)).getName();
+			if (fileName.contains(" - "))
+				fileName = fileName.substring(0, fileName.indexOf(" - "))
+						.trim();
+			fileName = fileName.replaceAll("\\.txt", "").trim();
+			fileName = fileName.replaceAll("\\.pipe", "").trim();
+
+			ManualParseResultFile mFile = null;
+			String postFix = "draft1";
+			if (isD1)
+				mFile = tableD1.get(fileName);
+			else {
+				mFile = tableD2.get(fileName);
+				postFix = "draft2";
+			}
+			if (mFile == null)
+				System.out.println(fileName);
+			else {
+				String compareStr = compare(mFile, aFile);
+				String outputPath = outputFolderPath + "/" + postFix + "/" +fileName
+						+ ".log";
+				BufferedWriter writer = new BufferedWriter(new FileWriter(
+						outputPath));
+				writer.write(compareStr);
+				writer.close();
+			}
+		}
+	}
+
 	public static String compare(ManualParseResultFile manualFile,
 			ParseResultFile autoFile) {
 		String result = "";
@@ -47,6 +123,17 @@ public class ManualAutoComparer {
 				String range1TxtAuto = autoUnit.getRange1TxtAuto();
 				String range2TxtAuto = autoUnit.getRange2TxtAuto();
 
+				/*range1TxtManual = range1TxtManual.replaceAll(" ", "");
+				range2TxtManual = range2TxtManual.replaceAll(" ", "");
+				range1TxtManual = range1TxtManual.replaceAll("“", "\"");
+				range2TxtManual = range2TxtManual.replaceAll("”", "\"");
+				range1TxtAuto = range1TxtAuto.replaceAll(" ", "");
+				range2TxtAuto = range2TxtAuto.replaceAll(" ", "");*/
+				range1TxtManual = range1TxtManual.replaceAll("[^a-zA-Z]","");
+				range2TxtManual = range2TxtManual.replaceAll("[^a-zA-Z]","");
+				range1TxtAuto = range1TxtAuto.replaceAll("[^a-zA-Z]","");
+				range2TxtAuto = range2TxtAuto.replaceAll("[^a-zA-Z]","");
+				
 				if (range1TxtManual.trim().length() == 0
 						&& range1TxtAuto.trim().length() == 0) {
 					isRange1Match = true;
@@ -81,6 +168,7 @@ public class ManualAutoComparer {
 					if (mType.equals(aType)) {
 						if (mType.equals("Explicit")) {
 							agreedExplicit++;
+							
 							if (mSenseType.equals(aSenseType)) {
 								if (mSenseType.equals("Comparison")) {
 									agreedComparison++;
@@ -91,13 +179,15 @@ public class ManualAutoComparer {
 								} else if (mSenseType.equals("Temporal")) {
 									agreedTemporal++;
 								}
+								agreedTypeCount++;
 							} else {
 								String str = "Auto: " + aSenseType + ", Kate: "
-										+ mSenseType + ", Explicit";
+										+ mSenseType + ", Explicit"+ "|"+manualUnit.getRange1Txt()+"|"+manualUnit.getRange2Txt();
 								typeDisagreedDetails.add(str);
 							}
 						} else if (mType.equals("Implicit")) {
 							agreedImplicit++;
+							
 							if (mSenseType.equals(aSenseType)) {
 								if (mSenseType.equals("Comparison")) {
 									agreedComparison++;
@@ -108,9 +198,10 @@ public class ManualAutoComparer {
 								} else if (mSenseType.equals("Temporal")) {
 									agreedTemporal++;
 								}
+								agreedTypeCount++;
 							} else {
 								String str = "Auto: " + aSenseType + ", Kate: "
-										+ mSenseType + ", Implicit";
+										+ mSenseType + ", Implicit" + "|"+manualUnit.getRange1Txt()+"|"+manualUnit.getRange2Txt();
 								typeDisagreedDetails.add(str);
 							}
 						} else if (mType.equals("EntRel")) {
@@ -170,7 +261,8 @@ public class ManualAutoComparer {
 					}
 				}
 
-				if(isRange1Match && isRange2Match) found = true;
+				if (isRange1Match && isRange2Match)
+					found = true;
 			}
 			if (found == false) {
 				String str = "Auto annotated while Kate does not: |"
@@ -198,11 +290,11 @@ public class ManualAutoComparer {
 			disAgreedTypeStr += str + "\n";
 		}
 		String secondStart = "4 Class Relation Sense: " + agreedTypeCount + "/"
-				+ senseCount + "Agreed\n";
+				+ senseCount + " Agreed\n";
 		secondStart += agreedComparison + " Comparison\n";
 		secondStart += agreedContingency + " Contingency\n";
 		secondStart += agreedExpansion + " Expansion\n";
-		secondStart += agreedTemporal + "Temporal";
+		secondStart += agreedTemporal + " Temporal\n";
 
 		result += start;
 		result += kfrCountStr;
