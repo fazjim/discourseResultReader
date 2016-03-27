@@ -161,25 +161,38 @@ public class ModificationRemover {
 			for (PipeUnit unit : units) {
 				String range1 = unit.getManualRange1();
 				String range2 = unit.getManualRange2();
+				String range3 = unit.getManualConnectiveRange();
 				int[] range1Indices = retrieveRanges(range1);
 				int[] range2Indices = retrieveRanges(range2);
-
+				int[] connectiveIndices = null;
+				
 				String range1Txt = "";
 				String range2Txt = "";
-
+				String connective = "";
+				if(range3.trim().length()>0) {
+					connectiveIndices = retrieveRanges(range3);
+				}
+				
 				if (name.contains("draft1")) {
 					range1Txt = d1Txt.substring(range1Indices[0],
 							range1Indices[1]);
 					range2Txt = d1Txt.substring(range2Indices[0],
 							range2Indices[1]);
+					if(connectiveIndices !=null) {
+						connective = d1Txt.substring(connectiveIndices[0], connectiveIndices[1]);
+					}
 				} else {
 					range1Txt = d2Txt.substring(range1Indices[0],
 							range1Indices[1]);
 					range2Txt = d2Txt.substring(range2Indices[0],
 							range2Indices[1]);
+					if(connectiveIndices !=null) {
+						connective = d2Txt.substring(connectiveIndices[0], connectiveIndices[1]);
+					}
 				}
 				unit.setRange1Txt(range1Txt);
 				unit.setRange2Txt(range2Txt);
+				unit.setConnectiveManual(connective);
 			}
 		}
 	}

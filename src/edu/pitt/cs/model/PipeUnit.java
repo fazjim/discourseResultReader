@@ -57,6 +57,11 @@ public class PipeUnit {
 		String range1 = getAttr(14);
 		return range1;
 	}
+	
+	public String getManualConnectiveRange() {
+		String range = getAttr(1);
+		return range;
+	}
 
 	public String getManualRange2() {
 		String range2 = getAttr(20);
@@ -67,6 +72,20 @@ public class PipeUnit {
 		return getAttr(PipeAttribute.RELATION_TYPE);
 	}
 
+	String connective;
+	
+	public String getConnectiveManual() {
+		return connective;
+	}
+	
+	public void setConnectiveManual(String connective) {
+		this.connective = connective;
+	}
+	
+	public String getConnectiveAuto() {
+		return getAttr(PipeAttribute.CONN_RAWTEXT);
+	}
+	
 	public String getRelationType() {
 		return getAttr(PipeAttribute.FIRST_SEMCLASS_CONN);
 	}
