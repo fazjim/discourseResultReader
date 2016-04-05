@@ -1,5 +1,6 @@
 package edu.pitt.cs.model;
 
+import java.util.HashSet;
 import java.util.StringTokenizer;
 
 /**
@@ -92,6 +93,24 @@ public class PipeUnit {
 	
 	public String getManualRelationType() {
 		return getAttr(8);
+	}
+	
+	public HashSet<String> getManualRelationTypes() {
+		HashSet<String> types = new HashSet<String>();
+		types.add(getAttr(8));
+		types.add(getAttr(9));
+		return types;
+	}
+	
+	public String getManualRelationTypeStr() {
+		String a = getAttr(8);
+		String b = getAttr(9);
+		String all = "";
+		if(a.length()>0) 
+			all += a;
+		if(b.length()>0) 
+			all += "," + b;
+		return all;
 	}
 
 	private String range1Txt = "";
