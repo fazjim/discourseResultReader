@@ -12,6 +12,7 @@ import java.util.List;
 
 import edu.pitt.cs.model.ManualParseResultFile;
 import edu.pitt.cs.model.ParseResultFile;
+import edu.pitt.cs.model.PipeAttribute;
 import edu.pitt.cs.model.PipeUnit;
 
 class PipeUnitPair {
@@ -78,14 +79,14 @@ class TotalSum {
 		String str = "";
 		str += generateOverallCountStr();
 		str += "\n";
-	
+
 		str += "Type Agreed:\n";
-		String[] types = {"Explicit", "Implicit", "EntRel", "AltLex"};
-		for(String type: types) {
+		String[] types = { "Explicit", "Implicit", "EntRel", "AltLex" };
+		for (String type : types) {
 			str += generateAgreeCountStr(type);
 			str += "\n";
 		}
-		
+
 		str += generateNotAgreedTypeStr() + "\n";
 		str += generateOnlyStr();
 		return str;
@@ -94,63 +95,67 @@ class TotalSum {
 	public String generateOverallCountStr() {
 		String[] matches = { "ExactMatch", "PartialMatch",
 				"Arg1Match-Arg2NotMatch", "Arg2Match-Arg1NotMatch" };
-		String[] types = {"Explicit", "Implicit", "EntRel", "AltLex"};
+		String[] types = { "Explicit", "Implicit", "EntRel", "AltLex" };
 		int agreedTotal = 0;
 		int notAgreedTotal = 0;
 		String str = "";
-		for(String type: types) {
-			for(String match: matches) {
+		for (String type : types) {
+			for (String match : matches) {
 				String matchkey = match + "-" + type;
 				int val = 0;
 				Iterator<String> it = overallCounting.keySet().iterator();
-				while(it.hasNext()) {
+				while (it.hasNext()) {
 					String key = it.next();
-					if(key.contains(matchkey)) {
+					if (key.contains(matchkey)) {
 						int count = 0;
-						if(overallCounting.containsKey(key)) count = overallCounting.get(key);
+						if (overallCounting.containsKey(key))
+							count = overallCounting.get(key);
 						val += count;
-					} 
+					}
 				}
 				str += val + " " + type + " with " + match + "\n";
 				agreedTotal += val;
 			}
 		}
-		
+
 		Iterator<String> it = overallCounting.keySet().iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			String key = it.next();
-			if(key.contains("NotAgreed")) {
+			if (key.contains("NotAgreed")) {
 				int count = 0;
-				if(overallCounting.containsKey(key)) count = overallCounting.get(key);
+				if (overallCounting.containsKey(key))
+					count = overallCounting.get(key);
 				notAgreedTotal += count;
-			} 
+			}
 		}
-		str = agreedTotal + " Agreed Type\n\n" + notAgreedTotal + " No Agreed Type\n\n" + str;
+		str = agreedTotal + " Agreed Type\n\n" + notAgreedTotal
+				+ " No Agreed Type\n\n" + str;
 		return str;
 	}
-	
+
 	public String generateOnlyStr() {
-		String[] starts = {"KFR ONLY", "PARSER ONLY"};
+		String[] starts = { "KFR ONLY", "PARSER ONLY" };
 		String str = "";
-		for(String start: starts) {
+		for (String start : starts) {
 			int countAll = 0;
 			String startStr = "";
 			Iterator<String> it = overallCounting.keySet().iterator();
-			while(it.hasNext()) {
+			while (it.hasNext()) {
 				String key = it.next();
-				if(key.contains(start)) {
+				if (key.contains(start)) {
 					int count = 0;
-					if(overallCounting.containsKey(key)) count = overallCounting.get(key);
+					if (overallCounting.containsKey(key))
+						count = overallCounting.get(key);
 					startStr += count + " " + key + "\n";
 					countAll += count;
 				}
 			}
-			startStr = countAll + " " + start +"\n" + startStr;
+			startStr = countAll + " " + start + "\n" + startStr;
 			str += startStr + "\n";
 		}
 		return str;
 	}
-	
+
 	public String generateAgreeCountStr(String type) {
 		String str = "On agreed " + type + " cases\n";
 		// String[] types = {"Explicit", "Implicit", "EntRel", "AltLex"};
@@ -167,7 +172,8 @@ class TotalSum {
 			for (String agreeSense : agreeSenses) {
 				String tag = match + "-" + type + " " + agreeSense;
 				int count = 0;
-				if(overallCounting.containsKey(tag)) count = overallCounting.get(tag);
+				if (overallCounting.containsKey(tag))
+					count = overallCounting.get(tag);
 				str += count + " " + tag + "\n";
 			}
 			str += "Senses disagree:\n";
@@ -180,7 +186,8 @@ class TotalSum {
 							&& !key.contains(agreeSenses[2])
 							&& !key.contains(agreeSenses[3])) {
 						int count = 0;
-						if(overallCounting.containsKey(key)) count = overallCounting.get(key);
+						if (overallCounting.containsKey(key))
+							count = overallCounting.get(key);
 						str += count + " " + key + "\n";
 					}
 				}
@@ -195,19 +202,20 @@ class TotalSum {
 		String str = "";
 		int notAgreed = 0;
 		String[] matches = { "ExactMatch", "PartialMatch",
-				"Arg1Match-Arg2NotMatch", "Arg2Match-Arg1NotMatch" }; 
-		
-		for(String match: matches) {
+				"Arg1Match-Arg2NotMatch", "Arg2Match-Arg1NotMatch" };
+
+		for (String match : matches) {
 			str += "\n";
 			str += match + " cases\n";
 			String matchKey = match + "-" + "NotAgreed";
 			Iterator<String> it = overallCounting.keySet().iterator();
-			while(it.hasNext()) {
+			while (it.hasNext()) {
 				String key = it.next();
-				if(key.contains(matchKey)) {
+				if (key.contains(matchKey)) {
 					int count = 0;
-					if(overallCounting.containsKey(key)) count = overallCounting.get(key);
-					str += count +  " " + key + "\n";
+					if (overallCounting.containsKey(key))
+						count = overallCounting.get(key);
+					str += count + " " + key + "\n";
 					notAgreed += count;
 				}
 			}
@@ -215,7 +223,6 @@ class TotalSum {
 		str = notAgreed + " TYPE NOT AGREED\n" + str;
 		return str;
 	}
-	
 
 	Hashtable<String, Integer> disagreedEntTable = new Hashtable<String, Integer>();
 	Hashtable<String, Integer> disagreedTypeTable = new Hashtable<String, Integer>();
@@ -341,7 +348,8 @@ public class ManualAutoComparer {
 		String manualFolderPath = "C:\\Not Backed Up\\discourse_parse_results\\manual2";
 		String autoFolderPath = "C:\\Not Backed Up\\discourse_parse_results\\litman_corpus\\Braverman\\Braverman_raw_txt";
 		String outputFolderPath = "C:\\Not Backed Up\\discourse_parse_results\\compareOutput";
-		TotalSum sum1 = new TotalSum();
+		countTypes(manualFolderPath, autoFolderPath);
+		/*TotalSum sum1 = new TotalSum();
 		TotalSum sum2 = new TotalSum();
 		TotalSum[] sums = { sum1, sum2 };
 		compareV3(manualFolderPath, autoFolderPath, outputFolderPath, sums);
@@ -353,7 +361,7 @@ public class ManualAutoComparer {
 		BufferedWriter writer2 = new BufferedWriter(new FileWriter(
 				outputFolderPath + "/" + "compareSumD2.txt"));
 		writer2.write(sums[1].printCounting());
-		writer2.close();
+		writer2.close();*/
 	}
 
 	public static void compare(String manualFolderPath, String autoFolderPath,
@@ -387,6 +395,7 @@ public class ManualAutoComparer {
 		}
 		for (ParseResultFile aFile : autoResults) {
 			if (aFile.isPDTB1()) {
+				// ModificationRemover.removeBoundaryCases(aFile, path);
 				String fileName = aFile.getFileName();
 				boolean isD1 = false;
 				if (fileName.contains("draft1")) {
@@ -428,9 +437,123 @@ public class ManualAutoComparer {
 		}
 	}
 	
-	
-	public static void compareV3(String manualFolderPath, String autoFolderPath,
-			String outputFolderPath, TotalSum[] sums) throws IOException {
+	public static void countTypes(String manualFolderPath,
+			String autoFolderPath) throws IOException {
+		List<ManualParseResultFile> manualResults = ManualParseResultReader
+				.readFiles(manualFolderPath);
+		List<ParseResultFile> autoResults = ParseResultReader
+				.readFiles(autoFolderPath);
+		
+		int explicitD1 = 0;
+		int implicitD1 = 0;
+		int entRelD1 = 0;
+		int altLexD1 = 0;
+		int explicitD2 = 0;
+		int implicitD2 = 0;
+		int entRelD2 = 0;
+		int altLexD2 = 0;
+		
+		for (ManualParseResultFile mFile : manualResults) {
+			String fileName = mFile.getFileName();
+			if (fileName.contains("draft1")) {
+				List<PipeUnit> units = mFile.getPipes();
+				for(PipeUnit unit: units) {
+					if(unit.getElementType().equals("Explicit")) {
+						explicitD1++;
+					} else if(unit.getElementType().equals("Implicit")) {
+						implicitD1++;
+					} else if(unit.getElementType().equals("EntRel")) {
+						entRelD1++;
+					} else if(unit.getElementType().equals("AltLex")) {
+						altLexD1++;
+					}
+				}
+			} else if(fileName.contains("draft2")) {
+				List<PipeUnit> units = mFile.getPipes();
+				for(PipeUnit unit: units) {
+					if(unit.getElementType().equals("Explicit")) {
+						explicitD2++;
+					} else if(unit.getElementType().equals("Implicit")) {
+						implicitD2++;
+					} else if(unit.getElementType().equals("EntRel")) {
+						entRelD2++;
+					} else if(unit.getElementType().equals("AltLex")) {
+						altLexD2++;
+					}
+				}
+			}
+		}
+		
+		
+		int autoExplicitD1 = 0;
+		int autoImplicitD1 = 0;
+		int autoEntRelD1 = 0;
+		int autoAltLexD1 = 0;
+		int autoExplicitD2 = 0;
+		int autoImplicitD2 = 0;
+		int autoEntRelD2 = 0;
+		int autoAltLexD2 = 0;
+		
+		for (ParseResultFile aFile : autoResults) {
+			String fileName = aFile.getFileName();
+			if (aFile.isPDTB1()&& fileName.contains("draft1")) {
+				List<PipeUnit> units = aFile.getPipes();
+				for(PipeUnit unit: units) {
+					if(unit.getElementType().equals("Explicit")) {
+						autoExplicitD1++;
+					} else if(unit.getElementType().equals("Implicit")) {
+						autoImplicitD1++;
+					} else if(unit.getElementType().equals("EntRel")) {
+						autoEntRelD1++;
+					} else if(unit.getElementType().equals("AltLex")) {
+						autoAltLexD1++;
+					}
+				}
+			} else if(aFile.isPDTB1()&& fileName.contains("draft2")) {
+				List<PipeUnit> units = aFile.getPipes();
+				for(PipeUnit unit: units) {
+					if(unit.getElementType().equals("Explicit")) {
+						autoExplicitD2++;
+					} else if(unit.getElementType().equals("Implicit")) {
+						autoImplicitD2++;
+					} else if(unit.getElementType().equals("EntRel")) {
+						autoEntRelD2++;
+					} else if(unit.getElementType().equals("AltLex")) {
+						autoAltLexD2++;
+					}
+				}
+			}
+		}
+		
+		System.out.println("KFR -  Draft 1");
+		System.out.println("Explicit: "+explicitD1);
+		System.out.println("Implicit: "+implicitD1);
+		System.out.println("EntRel: "+entRelD1);
+		System.out.println("AltLex: "+altLexD1);
+		
+		System.out.println("KFR -  Draft 2");
+		System.out.println("Explicit: "+explicitD2);
+		System.out.println("Implicit: "+implicitD2);
+		System.out.println("EntRel: "+entRelD2);
+		System.out.println("AltLex: "+altLexD2);
+		
+		System.out.println("Auto -  Draft 1");
+		System.out.println("Explicit: "+autoExplicitD1);
+		System.out.println("Implicit: "+autoImplicitD1);
+		System.out.println("EntRel: "+autoEntRelD1);
+		System.out.println("AltLex: "+autoAltLexD1);
+		
+		System.out.println("Auto -  Draft 2");
+		System.out.println("Explicit: "+autoExplicitD2);
+		System.out.println("Implicit: "+autoImplicitD2);
+		System.out.println("EntRel: "+autoEntRelD2);
+		System.out.println("AltLex: "+autoAltLexD2);
+
+	}
+
+	public static void compareV3(String manualFolderPath,
+			String autoFolderPath, String outputFolderPath, TotalSum[] sums)
+			throws IOException {
 		List<ManualParseResultFile> manualResults = ManualParseResultReader
 				.readFiles(manualFolderPath);
 		List<ParseResultFile> autoResults = ParseResultReader
@@ -460,6 +583,7 @@ public class ManualAutoComparer {
 		}
 		for (ParseResultFile aFile : autoResults) {
 			if (aFile.isPDTB1()) {
+				ModificationRemover.removeBoundaryCases(aFile, path);
 				String fileName = aFile.getFileName();
 				boolean isD1 = false;
 				if (fileName.contains("draft1")) {
@@ -490,17 +614,16 @@ public class ManualAutoComparer {
 						sum = sums[1];
 					}
 					String compareStr = compareV3(mFile, aFile, sum);
-					/*String outputPath = outputFolderPath + "/" + postFix + "/"
-							+ fileName + ".log";
-					BufferedWriter writer = new BufferedWriter(new FileWriter(
-							outputPath));
-					writer.write(compareStr);
-					writer.close();*/
+					/*
+					 * String outputPath = outputFolderPath + "/" + postFix +
+					 * "/" + fileName + ".log"; BufferedWriter writer = new
+					 * BufferedWriter(new FileWriter( outputPath));
+					 * writer.write(compareStr); writer.close();
+					 */
 				}
 			}
 		}
 	}
-
 
 	public static String compareV3(ManualParseResultFile manualFile,
 			ParseResultFile autoFile, TotalSum sum) {
@@ -545,6 +668,17 @@ public class ManualAutoComparer {
 				"AltLex");
 		addOnlyRangesExact(manualUnits, autoUnits, notAgreedExact);
 
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Not Backed Up\\temp\\typenotagreed.txt",true));
+			for(PipeUnitPair pair: notAgreedExact) {
+				writer.write(pair.toString()+"\n");
+			}
+			writer.close();
+		}catch(Exception exp) {
+			exp.printStackTrace();
+		}
+		
+		
 		addAgreedExplicits(manualUnits, autoUnits, agreedExplicitPairsPartial);
 		addAgreedOthers(manualUnits, autoUnits, agreedImplicitPairsPartial,
 				"Implicit");
@@ -606,40 +740,39 @@ public class ManualAutoComparer {
 
 		addCountParserOnly(autoUnits, sum);
 		addCountKFROnly(manualUnits, sum);
-		
-		
-		addCount(agreedExplicitPairsExact, "ExactMatch-Explicit", temp);
-		addCount(agreedExplicitPairsPartial, "PartialMatch-Explicit", temp);
-		addCount(agreedExplicitPairsArg1, "Arg1Match-Arg2NotMatch-Explicit",
-				temp);
-		addCount(agreedExplicitPairsArg2, "Arg2Match-Arg1NotMatch-Explicit",
-				temp);
-		addCountNotAgreed(notAgreedExact, "ExactMatch-NotAgreed", temp);
 
-		addCount(agreedImplicitPairsExact, "ExactMatch-Implicit", temp);
-		addCount(agreedImplicitPairsPartial, "PartialMatch-Implicit", temp);
-		addCount(agreedImplicitPairsArg1, "Arg1Match-Arg2NotMatch-Implicit",
-				temp);
-		addCount(agreedImplicitPairsArg2, "Arg2Match-Arg1NotMatch-Implicit",
-				temp);
-		addCountNotAgreed(notAgreedPartial, "PartialMatch-NotAgreed", temp);
-
-		addCount(agreedEntRelPairsExact, "ExactMatch-EntRel", temp);
-		addCount(agreedEntRelPairsPartial, "PartialMatch-EntRel", temp);
-		addCount(agreedEntRelPairsArg1, "Arg1Match-Arg2NotMatch-EntRel", temp);
-		addCount(agreedEntRelPairsArg2, "Arg2Match-Arg1NotMatch-EntRel", temp);
-		addCountNotAgreed(notAgreedArg1, "Arg1Match-Arg2NotMatch-NotAgreed",
-				temp);
-
-		addCount(agreedAltLexPairsExact, "ExactMatch-AltLex", temp);
-		addCount(agreedAltLexPairsPartial, "PartialMatch-AltLex", temp);
-		addCount(agreedAltLexPairsArg1, "Arg1Match-Arg2NotMatch-AltLex", temp);
-		addCount(agreedAltLexPairsArg2, "Arg2Match-Arg1NotMatch-AltLex", temp);
-		addCountNotAgreed(notAgreedArg2, "Arg2Match-Arg1NotMatch-NotAgreed",
-				temp);
-
-		addCountParserOnly(autoUnits, temp);
-		addCountKFROnly(manualUnits, temp);
+//		addCount(agreedExplicitPairsExact, "ExactMatch-Explicit", temp);
+//		addCount(agreedExplicitPairsPartial, "PartialMatch-Explicit", temp);
+//		addCount(agreedExplicitPairsArg1, "Arg1Match-Arg2NotMatch-Explicit",
+//				temp);
+//		addCount(agreedExplicitPairsArg2, "Arg2Match-Arg1NotMatch-Explicit",
+//				temp);
+//		addCountNotAgreed(notAgreedExact, "ExactMatch-NotAgreed", temp);
+//
+//		addCount(agreedImplicitPairsExact, "ExactMatch-Implicit", temp);
+//		addCount(agreedImplicitPairsPartial, "PartialMatch-Implicit", temp);
+//		addCount(agreedImplicitPairsArg1, "Arg1Match-Arg2NotMatch-Implicit",
+//				temp);
+//		addCount(agreedImplicitPairsArg2, "Arg2Match-Arg1NotMatch-Implicit",
+//				temp);
+//		addCountNotAgreed(notAgreedPartial, "PartialMatch-NotAgreed", temp);
+//
+//		addCount(agreedEntRelPairsExact, "ExactMatch-EntRel", temp);
+//		addCount(agreedEntRelPairsPartial, "PartialMatch-EntRel", temp);
+//		addCount(agreedEntRelPairsArg1, "Arg1Match-Arg2NotMatch-EntRel", temp);
+//		addCount(agreedEntRelPairsArg2, "Arg2Match-Arg1NotMatch-EntRel", temp);
+//		addCountNotAgreed(notAgreedArg1, "Arg1Match-Arg2NotMatch-NotAgreed",
+//				temp);
+//
+//		addCount(agreedAltLexPairsExact, "ExactMatch-AltLex", temp);
+//		addCount(agreedAltLexPairsPartial, "PartialMatch-AltLex", temp);
+//		addCount(agreedAltLexPairsArg1, "Arg1Match-Arg2NotMatch-AltLex", temp);
+//		addCount(agreedAltLexPairsArg2, "Arg2Match-Arg1NotMatch-AltLex", temp);
+//		addCountNotAgreed(notAgreedArg2, "Arg2Match-Arg1NotMatch-NotAgreed",
+//				temp);
+//
+//		addCountParserOnly(autoUnits, temp);
+//		addCountKFROnly(manualUnits, temp);
 
 		return temp.printCounting();
 	}
@@ -665,6 +798,7 @@ public class ManualAutoComparer {
 
 	public static void addCountNotAgreed(List<PipeUnitPair> pairs,
 			String rootKey, TotalSum sum) {
+		
 		for (PipeUnitPair pair : pairs) {
 			PipeUnit manual = pair.manualUnit;
 			PipeUnit auto = pair.autoUnit;
@@ -681,21 +815,49 @@ public class ManualAutoComparer {
 						+ manualKey + " PARSER " + auto.getElementType() + "|"
 						+ autoKey;
 			}
+		
 			sum.addCount(key);
 		}
+		
 	}
-	
+
 	public static void addCountParserOnly(List<PipeUnit> autoUnits, TotalSum sum) {
-		for(PipeUnit unit: autoUnits) {
-			String key = "PARSER ONLY|"+unit.getElementType()+"|"+unit.getRelationType();
-			sum.addCount(key);
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(
+					"C:\\Not Backed Up\\temp\\PARSERONLY.txt",true));
+			for (PipeUnit unit : autoUnits) {
+				String key = "PARSER ONLY|" + unit.getElementType() + "|"
+						+ unit.getRelationType();
+				sum.addCount(key);
+				// System.out.println(key + "|" + unit.getRange1TxtAuto() + "|"
+				// + unit.getRange2TxtAuto() + "\n");
+
+				writer.write(key + "|" + unit.getRange1TxtAuto() + "|"
+						+ unit.getRange2TxtAuto() + "\n");
+			}
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 	}
-	
+
 	public static void addCountKFROnly(List<PipeUnit> manualUnits, TotalSum sum) {
-		for(PipeUnit unit: manualUnits) {
-			String key = "KFR ONLY|"+unit.getElementType()+"|"+unit.getManualRelationTypeStr();
-			sum.addCount(key);
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(
+					"C:\\Not Backed Up\\temp\\KFRONLY.txt",true));
+			for (PipeUnit unit : manualUnits) {
+				String key = "KFR ONLY|" + unit.getElementType() + "|"
+						+ unit.getManualRelationTypeStr();
+				sum.addCount(key);
+				writer.write(key + "|" + unit.getRange1Txt() + "|"
+						+ unit.getRange2Txt() + "\n");
+			}
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -1126,6 +1288,7 @@ public class ManualAutoComparer {
 							pairs.add(pair);
 							it.remove();
 							autoIt.remove();
+							// System.out.println(pair);
 							break;
 						}
 					}
@@ -1224,6 +1387,7 @@ public class ManualAutoComparer {
 						pair.manualUnit = mUnit;
 						pair.autoUnit = aUnit;
 						pairs.add(pair);
+						// System.out.println(pair);
 						it.remove();
 						autoIt.remove();
 						break;
