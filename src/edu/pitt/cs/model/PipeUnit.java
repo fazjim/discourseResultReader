@@ -10,8 +10,33 @@ import java.util.StringTokenizer;
  *
  */
 public class PipeUnit {
+	private boolean filterPDTB2 = false;
+	
+	public void setFilterPDTB2() {
+		this.filterPDTB2 = true;
+	}
+	
 	private String[] attrs = new String[PipeAttribute.NUM_ATTRs];
 
+	private boolean isNonajacent = false;
+	
+	public void setNonAjacent() {
+		this.isNonajacent = true;
+	}
+	
+	String strInMiddle;
+	
+	public void setStrInMiddle(String str) {
+		this.strInMiddle = str;
+	}
+	
+	public String getStrInMiddle() {
+		return this.strInMiddle;
+	}
+	
+	public boolean isNonajacent() {
+		return this.isNonajacent;
+	}
 	/**
 	 * Constructor, pass in the line to construct all the attributes
 	 * 
@@ -63,6 +88,10 @@ public class PipeUnit {
 		String range = getAttr(1);
 		return range;
 	}
+	
+	public String getAutoConnectiveRange() {
+		return getAttr(PipeAttribute.CONN_SPANLIST);
+	}
 
 	public String getManualRange2() {
 		String range2 = getAttr(20);
@@ -88,7 +117,12 @@ public class PipeUnit {
 	}
 	
 	public String getRelationType() {
-		return getAttr(PipeAttribute.FIRST_SEMCLASS_CONN);
+		String type = getAttr(PipeAttribute.FIRST_SEMCLASS_CONN);
+		if(filterPDTB2) {
+			if(type.contains("."))
+			type = type.substring(0, type.indexOf("."));
+		}
+		return type;
 	}
 	
 	public String getManualRelationType() {

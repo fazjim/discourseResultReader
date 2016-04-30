@@ -35,6 +35,12 @@ public class ParseResultFile {
 		pipes = new ArrayList<PipeUnit>();
 	}
 	
+	public void setPDTB2Filter() {
+		for(PipeUnit unit: pipes) {
+			unit.setFilterPDTB2();
+		}
+	}
+	
 	public ParseResultFile(String fileName) throws IOException {
 		this.fileName = fileName;
 		if (fileName.contains("pdtb_1")) {

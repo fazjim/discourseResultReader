@@ -285,6 +285,19 @@ public class ModificationRemover {
 						connective = concatenateString(range3IndiceList, d1Txt);
 					}
 					
+					if(range1Indices[1]<range2Indices[0]) {
+						String subStr = d1Txt.substring(range1Indices[1]+1, range2Indices[0]);
+						int count = 0;
+						
+						if(subStr!=null ) {
+							for(int i = 0;i<subStr.length();i++) {
+								if(subStr.charAt(i)=='.') count++;
+							}
+							unit.setStrInMiddle(subStr);
+						}
+						if(count>0)  unit.setNonAjacent();
+					}
+					
 				} else {
 					range1Txt = d2Txt.substring(range1Indices[0],
 							range1Indices[1]);
@@ -299,6 +312,19 @@ public class ModificationRemover {
 					range2Txt = concatenateString(range2IndiceList, d2Txt);
 					if(connectiveIndices !=null) {
 						connective = concatenateString(range3IndiceList, d2Txt);
+					}
+					
+					if(range1Indices[1]<range2Indices[0]) {
+						String subStr = d2Txt.substring(range1Indices[1]+1, range2Indices[0]);
+						int count = 0;
+						if(!range1Txt.trim().endsWith(".")) count= -1;
+						
+						if(subStr!=null ) {
+							for(int i = 0;i<subStr.length();i++) {
+								if(subStr.charAt(i)=='.') count++;
+							}
+						}
+						if(count>0)  unit.setNonAjacent();
 					}
 				}
 				unit.setRange1Txt(range1Txt);
