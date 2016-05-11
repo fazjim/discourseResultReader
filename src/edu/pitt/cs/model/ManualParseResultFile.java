@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import edu.pitt.cs.io.ModificationRemover;
+
 /**
  * Data structure of a file containing the pipes
  * 
@@ -16,6 +18,24 @@ import java.util.List;
 public class ManualParseResultFile {
 	private String fileName;
 	private List<PipeUnit> pipes;
+	private List<String> sentences = new ArrayList<String>();
+	
+	public boolean containsBothInOne(String arg1, String arg2) {
+		for(String str: sentences) {
+			str = str + ".";
+			if(str.contains(arg1) && str.contains(arg2)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void setOrignialTxt(String txt) {
+		String[] strs = txt.split("\\.");
+		for(String str: strs) {
+			sentences.add(ModificationRemover.compressStr(str));
+		}
+	}
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;

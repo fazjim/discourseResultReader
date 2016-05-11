@@ -194,6 +194,12 @@ public class ModificationRemover {
 		}
 	}
 	
+	public static String compressStr(String str) {
+		str = str.replaceAll("[^a-zA-Z]", "");
+		str = str.replaceAll(" ", "");
+		return str;
+	}
+	
 	public static String concatenateString(List<int[]> rangeList, String txt) {
 		String str = "";
 		for(int i = 0;i<rangeList.size();i++) {
@@ -245,9 +251,14 @@ public class ModificationRemover {
 
 			String d1Txt = readTxt(d1File);
 			String d2Txt = readTxt(d2File);
-
-			ManualParseResultFile newFile = new ManualParseResultFile();
-			newFile.setFileName(name);
+			if(name.contains("draft1")) {
+				file.setOrignialTxt(d1Txt);
+			} else {
+				file.setOrignialTxt(d2Txt);
+			}
+			
+			//ManualParseResultFile newFile = new ManualParseResultFile();
+			//newFile.setFileName(name);
 
 			List<PipeUnit> units = file.getPipes();
 			for (PipeUnit unit : units) {
